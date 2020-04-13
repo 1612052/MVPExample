@@ -1,4 +1,4 @@
-package com.chienpm.mvpexample
+package com.chienpm.mvpexample.util
 
 import android.os.Handler
 
