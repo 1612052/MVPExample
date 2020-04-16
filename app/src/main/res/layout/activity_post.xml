@@ -6,11 +6,20 @@
     tools:context=".ui.posts.PostActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
+        android:id="@+id/postList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/emptyView"
+        android:text="No post fetched!"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:visibility="gone"
+        />
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
@@ -18,4 +27,12 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
+    <Button
+        android:id="@+id/reload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reload"
+        android:textAllCaps="false"
+        android:layout_gravity="center|bottom"
+        />
 </FrameLayout>

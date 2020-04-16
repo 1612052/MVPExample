@@ -1,7 +1,7 @@
 package com.chienpm.mvpexample.ui.posts
 
 import com.chienpm.mvpdagger2retrofittypecode.ui.base.BaseContract
-import com.chienpm.mvpexample.database.repository.posts.Post
+import com.chienpm.mvpexample.data.database.repository.posts.Post
 
 class PostContract {
     interface View: BaseContract.View{
@@ -9,7 +9,10 @@ class PostContract {
         fun hideProgress()
 
         fun setItems(items: List<Post>)
-        fun showEmptyView(message: String)
+        fun showEmptyView()
+        fun hideEmptyView()
+
+        fun makeToast(msg: String)
 
         fun navigatePostDetail(post: Post)
     }
@@ -18,9 +21,7 @@ class PostContract {
 
         fun loadPosts()
 
-        fun onPostsLoaded(posts: List<Post>)
-
-        fun setEmptyView()
+        fun reload()
 
         fun onItemClicked(item: Post)
 

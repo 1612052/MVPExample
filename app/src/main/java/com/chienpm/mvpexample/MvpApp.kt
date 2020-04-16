@@ -1,6 +1,7 @@
 package com.chienpm.mvpexample
 
 import android.app.Application
+import com.chienpm.mvpexample.data.database.AppDatabase
 
 class MvpApp: Application() {
 

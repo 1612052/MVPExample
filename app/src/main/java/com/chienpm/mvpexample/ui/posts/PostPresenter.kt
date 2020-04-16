@@ -1,41 +1,48 @@
 package com.chienpm.mvpexample.ui.posts
 
-import com.chienpm.mvpexample.database.repository.posts.Post
+import com.chienpm.mvpexample.data.database.repository.posts.Post
 import com.chienpm.mvpexample.ui.posts.interactor.PostInteractor
 import com.chienpm.mvpexample.ui.posts.interactor.PostMvpInteractor
 
-class PostPresenter(var postView: PostContract.View): PostContract.Presenter {
+class PostPresenter(var postView: PostContract.View) : PostContract.Presenter {
 
-    private val interactor: PostMvpInteractor by lazy{
+    //todo: inject this
+    private val interactor: PostMvpInteractor by lazy {
         PostInteractor.getInstance()
     }
 
-    override fun onItemClicked(item: Post){
+    override fun onItemClicked(item: Post) {
         postView.navigatePostDetail(item)
     }
 
     override fun loadPosts() {
-        //todo do more
+        postView.showProgress()
         interactor.loadPosts()
     }
 
-    override fun onPostsLoaded(posts: List<Post>) {
-        postView.apply {
-            setItems(posts)
-            hideProgress()
-        }
+    override fun reload() {
+        postView.showProgress()
+        interactor.loadPosts() // sorry, Im lazy :[
     }
 
-    override fun setEmptyView() {
-        TODO("Not yet implemented")
+    fun onDataUpdated(
+        posts: List<Post>,
+        msg: String
+    ) {
+        postView.apply {
+            hideProgress()
+            setItems(posts)
+            makeToast(msg)
+            if (posts.isEmpty()) showEmptyView() else hideEmptyView()
+        }
     }
 
 
     override fun subscribe() {
-        TODO("Not yet implemented")
+        interactor.subscribe(this)
     }
 
     override fun unsubscribe() {
-        TODO("Not yet implemented")
+        interactor.unsubscribe(this)
     }
 }

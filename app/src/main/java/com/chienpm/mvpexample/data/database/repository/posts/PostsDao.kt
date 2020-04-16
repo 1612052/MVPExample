@@ -1,10 +1,11 @@
-package com.chienpm.mvpexample.database.repository.posts
+package com.chienpm.mvpexample.data.database.repository.posts
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.chienpm.mvpexample.database.repository.comments.Comment
 
+@Dao
 interface PostsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(posts: List<Post>)

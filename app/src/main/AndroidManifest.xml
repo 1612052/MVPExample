@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.chienpm.mvpexample">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".MvpApp"
@@ -13,14 +13,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name="com.chienpm.mvpexample.ui.login.LoginActivity">
+
+        </activity>
+        <activity android:name="com.chienpm.mvpexample.ui.posts.PostActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <activity android:name="com.chienpm.mvpexample.ui.posts.PostActivity"></activity>
     </application>
 
 </manifest>
