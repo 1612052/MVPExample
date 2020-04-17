@@ -38,13 +38,26 @@ class PostInteractor private constructor() : PostMvpInteractor {
         )
     }
 
+    private var cachePosts: List<Post> = listOf()
+
     override fun loadPosts() {
         CoroutineScope(Dispatchers.Main).launch {
-            // load from db
-            val dpPosts = withContext(Dispatchers.IO) { postRepository.loadPosts() }
 
-            Log.i("PostInteractor", "load from db")
-            notifyDataUpdated(dpPosts, "load posts from db")
+            // load from memory
+            if (!cachePosts.isEmpty()) {
+                Log.i("PostInteractor", "load from memory")
+                notifyDataUpdated(cachePosts, "load posts from memory")
+            }
+
+            // load from db
+            val dpPosts = withContext(Dispatchers.IO) {
+                postRepository.loadPosts()
+            }
+
+            if (shouldUpdateNewData(cachePosts, dpPosts)) {
+                Log.i("PostInteractor", "load from db")
+                notifyDataUpdated(dpPosts, "load posts from db")
+            }
 
             // load from api
             val apiPosts = withContext(Dispatchers.IO) {
@@ -52,7 +65,7 @@ class PostInteractor private constructor() : PostMvpInteractor {
                 parseResponse(res)
             }
 
-            if(shouldUpdateDataFromApi(dpPosts, apiPosts)) {
+            if (shouldUpdateNewData(dpPosts, apiPosts)) {
                 Log.i("PostInteractor", "load from api")
                 notifyDataUpdated(apiPosts, "load from api")
                 // save posts fetch from api to db
@@ -62,8 +75,8 @@ class PostInteractor private constructor() : PostMvpInteractor {
         }
     }
 
-    private fun shouldUpdateDataFromApi(dbPosts: List<Post>, apiPosts: List<Post>): Boolean {
-        return apiPosts.size > dbPosts.size
+    private fun shouldUpdateNewData(oldData: List<Post>, newData: List<Post>): Boolean {
+        return newData.size > oldData.size
     }
 
     private fun parseResponse(res: Response<List<PostResponse>>): List<Post> {
@@ -79,8 +92,9 @@ class PostInteractor private constructor() : PostMvpInteractor {
         posts: List<Post>,
         msg: String
     ) {
+        cachePosts = posts
         subscribers.forEach {
-            it.onDataUpdated(posts, msg)
+            it.onDataUpdated(cachePosts, msg)
         }
     }
 
