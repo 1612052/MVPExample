@@ -9,4 +9,5 @@ interface PostMvpInteractor{
     fun unsubscribe(presenter: PostPresenter)
 
     fun loadPosts()
+    fun requestDataFromApi()
 }

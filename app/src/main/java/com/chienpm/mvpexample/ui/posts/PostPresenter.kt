@@ -22,7 +22,7 @@ class PostPresenter(var postView: PostContract.View) : PostContract.Presenter {
 
     override fun reload() {
         postView.showProgress()
-        interactor.loadPosts() // sorry, Im lazy :[
+        interactor.requestDataFromApi()
     }
 
     fun onDataUpdated(

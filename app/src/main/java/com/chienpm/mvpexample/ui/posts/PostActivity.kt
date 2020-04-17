@@ -64,6 +64,4 @@ class PostActivity : AppCompatActivity(), PostContract.View {
         Toast.makeText(this, "clicked ${post.title}", Toast.LENGTH_LONG).show()
     }
 
-
-
 }

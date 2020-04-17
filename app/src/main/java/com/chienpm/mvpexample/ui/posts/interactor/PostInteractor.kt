@@ -24,6 +24,8 @@ class PostInteractor private constructor() : PostMvpInteractor {
         fun getInstance(): PostInteractor {
             return Holder.INSTANCE
         }
+
+        val TAG = "PostInteractor"
     }
 
     // todo: inject this
@@ -45,8 +47,8 @@ class PostInteractor private constructor() : PostMvpInteractor {
 
             // load from memory
             if (!cachePosts.isEmpty()) {
-                Log.i("PostInteractor", "load from memory")
-                notifyDataUpdated(cachePosts, "load posts from memory")
+                Log.i(TAG, "load from memory")
+                onDataChanged(cachePosts, "load from memory")
             }
 
             // load from db
@@ -55,8 +57,8 @@ class PostInteractor private constructor() : PostMvpInteractor {
             }
 
             if (shouldUpdateNewData(cachePosts, dpPosts)) {
-                Log.i("PostInteractor", "load from db")
-                notifyDataUpdated(dpPosts, "load posts from db")
+                Log.i(TAG, "load from db")
+                onDataChanged(dpPosts, "load from db")
             }
 
             // load from api
@@ -66,12 +68,28 @@ class PostInteractor private constructor() : PostMvpInteractor {
             }
 
             if (shouldUpdateNewData(dpPosts, apiPosts)) {
-                Log.i("PostInteractor", "load from api")
-                notifyDataUpdated(apiPosts, "load from api")
+                Log.i(TAG, "load from api")
+                onDataChanged(apiPosts, "load from api")
                 // save posts fetch from api to db
                 withContext(Dispatchers.IO) { postRepository.savePosts(apiPosts) }
             }
 
+        }
+    }
+
+    override fun requestDataFromApi() {
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(5000)
+            // load from api
+            val apiPosts = withContext(Dispatchers.IO) {
+                val res = apiService.getPosts()
+                parseResponse(res)
+            }
+
+            Log.i(TAG, "load from api")
+            onDataChanged(apiPosts, "load from api")
+            // save posts fetch from api to db
+            withContext(Dispatchers.IO) { postRepository.savePosts(apiPosts) }
         }
     }
 
@@ -88,10 +106,7 @@ class PostInteractor private constructor() : PostMvpInteractor {
             .map { p -> Post(id = p.id, title = p.title, body = p.body, userId = p.userId) }
     }
 
-    fun notifyDataUpdated(
-        posts: List<Post>,
-        msg: String
-    ) {
+    private fun onDataChanged(posts: List<Post>, msg: String) {
         cachePosts = posts
         subscribers.forEach {
             it.onDataUpdated(cachePosts, msg)
@@ -104,18 +119,18 @@ class PostInteractor private constructor() : PostMvpInteractor {
     override fun subscribe(presenter: PostPresenter) {
         if (!subscribers.contains(presenter)) {
             subscribers.add(presenter)
-            Log.i("LoginManager", "Subscribe successful")
+            Log.i(TAG, "Subscribe successful")
         } else {
-            Log.i("LoginManager", "Subscribe unsuccessful: presenter is existed")
+            Log.i(TAG, "Subscribe unsuccessful: presenter is existed")
         }
     }
 
     override fun unsubscribe(presenter: PostPresenter) {
         if (subscribers.contains(presenter)) {
             subscribers.remove(presenter)
-            Log.i("LoginManager", "Unsubscribe successful")
+            Log.i(TAG, "Unsubscribe successful")
         } else {
-            Log.i("LoginManager", "Unsubscribe unsuccessful: presenter is existed")
+            Log.i(TAG, "Unsubscribe unsuccessful: presenter is existed")
         }
     }
 
